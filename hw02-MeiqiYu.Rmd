@@ -1,0 +1,166 @@
+---
+title: "hw02-MeiqiYu"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(gapminder)
+library(tidyverse)
+```
+
+# Smell test the data
+* Gapminder is a data.frame which is a rectangular collection of variables (in the columns) and observations (in the rows). 
+* It contains 6 cloumns and 1704 rows.
+* We could get the facts about "extent" and "size" in the following six ways.
+1. `gapminder`
+It shows the entire dataframe which contains 6 comlumns and 1704 rows. 
+```{r}
+gapminder
+```
+
+2. `head(gapminder)` 
+By runnig this command, it is clear that this datframe contains 6 rows as it shows below.
+```{r}
+head(gapminder)
+```
+
+3. `str(gapminder)` 
+The result shows apparently the class, number of rows and varibles.
+```{r}
+str(gapminder)
+```
+
+4. `summary(gapminder)` 
+It is a summary about the dataframe so you can easily find that how many varibles it contains. It will be used to help us get a knowledge about the minimun value, the max value, 1st Qu.,3rd Qu. and median.
+```{r}
+summary(gapminder)
+```
+5.`dim(gapminder)` 
+`dim()` can be used to obtain the dimensions of the data frame (number of rows and number of columns). The output is a vector.
+```{r}
+dim(gapminder)
+```
+6.`nrow()`and`ncol()` 
+These two function can help us get number of rows and number of columns, respectively.
+```{r}
+nrow(gapminder)
+ncol(gapminder)
+```
+ 
+
+* There are six varibles in gapminder: country, continent, year, lifeExp, pop and gdpRercap. 
+Data type of each varible:
+ * country: character
+ * continent: character
+ * year: integar
+ * lifeExp: double
+ * pop: integar
+ * gdpPercap: double
+ The first two varibles are categerical varibles(qualitative) and the last four are quantitative varibles(numerical).
+ 
+# Explore individual variables
+In this part, I choose the following two varibles to explore: `continent` and `year`.
+* Possible range of `continent`: 
+Asia, Europe, Africa   Americas and Oceania 
+* Possible values of `year`:
+1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007.
+```{r}
+unique(gapminder$continent) 
+unique(gapminder$year) 
+```
+
+* Typical values contain the Min., 1st Qu., Median, Mean, 3rd QU., Max. For the `year` varible, the Min= 1952, 1st quartile= 1966, Median= 1980, Mean= 1980, 3rd quartile= 1993, Max= 2007.
+```{r}
+summary(gapminder$year)
+```
+* Spread of data 
+
+Overall range = max-min
+Overall range of `year` equals to 55.
+
+* Distribution of data 
+
+ * The shape of `year` is uniform, which means about the same amount of data occurs for each varible value.
+ * Mean and Median of `year` both equal to 1980.
+```{r}
+ggplot(gapminder,aes(year))+
+  geom_histogram(bins=50)
+```
+ 
+ * The standard deviation of an observation variable is the square root of its variance. We can know the standard deviation of `year` equals to 17.26533 from the below.
+```{r}
+sd(gapminder$year)
+```
+
+# Explore various plot types
+
+* A scatterplot of lifeExp and gdpPercap in blue.
+```{r}
+ggplot(gapminder,aes(x=lifeExp, y=(gdpPercap)))+
+  geom_point(color='steelblue',size=1)
+ 
+```
+
+
+* A histogram of lifeExp with bins = 100.
+
+```{r}
+ggplot(gapminder,aes(lifeExp))+
+  geom_histogram(bins=100)
+```
+
+* A densityplot of lifeExp.
+```{r}
+ggplot(gapminder,aes(lifeExp))+
+  geom_density(bw=2)
+```
+
+*A boxplot for all the continents vs lifeExp.
+
+
+```{r}
+a <- ggplot(gapminder,aes(continent,lifeExp)) + 
+  scale_y_log10()
+a + geom_boxplot()
+```
+
+
+
+*A violin plot for all entries of Americas and Africa occuring in the '60s.   vs lifeExp.
+
+```{r}
+gapminder %>% 
+  filter((continent == 'Americas' |continent == 'Africa'|continent == 'Asia') & year>=1960 & year < 1970) %>% 
+  ggplot(aes(continent,lifeExp))+
+  geom_violin()
+```
+
+# Use filter(), select() and %>%
+
+```{r}
+select(gapminder, year,lifeExp) %>% 
+  filter(year>=1960 & year < 1970) %>% 
+  ggplot(aes(year,lifeExp))+
+  geom_line()
+```
+
+# But I want to do more!
+By running this code `filter(gapminder, country == c("Rwanda", "Afghanistan"))`, the analyst didn't secceed to get what they want. They only got part of the result. 
+```{r}
+filter(gapminder, country == c("Rwanda", "Afghanistan"))
+```
+The correct way to do this is listed below:
+```{r}
+  d <- filter(gapminder,country == 'Rwanda' | country == 'Afghanistan')
+  knitr::kable(d)
+```
+
+
+
+
+
+
